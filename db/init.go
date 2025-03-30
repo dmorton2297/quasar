@@ -11,6 +11,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var Connection *gorm.DB
+
 func InitializeDatabase() {
 	dbUsername, dbPassword, dbHost, dbPort, dbName := loadEnvVars()
 	db := createDbConnection(dbUsername, dbPassword, dbHost, dbPort, dbName)
@@ -28,6 +30,7 @@ func migrate(db *gorm.DB) {
 func createDbConnection(dbUsername, dbPassword, dbHost, dbPort, dbName string) *gorm.DB {
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", dbUsername, dbPassword, dbHost, dbPort, dbName)
 	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	Connection = db // Assign global var so other files can access connection
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
